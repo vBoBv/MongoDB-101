@@ -19,9 +19,21 @@ before(done => {
 // 		console.warn('Warning', error);
 // 	});
 
+// beforeEach(done => {
+// 	mongoose.connection.collections.users.drop(() => {
+// 		//Ready to run the next test!
+// 		done();
+// 	});
+// });
+
 beforeEach(done => {
-	mongoose.connection.collections.users.drop(() => {
-		//Ready to run the next test!
-		done();
+	const { users, comments, blogPosts } = mongoose.connection.collections;
+
+	users.drop(() => {
+		comments.drop(() => {
+			blogPosts.drop(() => {
+				done();
+			});
+		});
 	});
 });
