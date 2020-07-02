@@ -7,7 +7,7 @@ const UserSchema = new Schema({
 	name: {
 		type: String,
 		validate: {
-			validator: name => name.length > 2,
+			validator: (name) => name.length > 2,
 			message: 'Name must be longer than 2 characters.'
 		},
 		required: [true, 'Name is required.']
@@ -23,9 +23,16 @@ const UserSchema = new Schema({
 	]
 });
 
-UserSchema.virtual('postCount').get(function() {
+UserSchema.virtual('postCount').get(function () {
 	// console.log('Hi');
 	return this.posts.length;
+});
+
+UserSchema.pre('remove', function (next) {
+	const BlogPost = mongoose.model('blogPost');
+	//this === joe
+
+	BlogPost.remove({ _id: { $in: this.blogPosts } }).then(() => next());
 });
 
 const User = mongoose.model('user', UserSchema);
